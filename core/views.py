@@ -957,7 +957,7 @@ def profile(request):
         user_form = UserUpdateForm(request.POST, request.FILES, instance=request.user)
         if user_form.is_valid():
             user_form.save()
-            messages.success(request, 'Your profile has been updated!')
+            # Removed success message - visual feedback is sufficient
             return redirect('profile')
     else:
         user_form = UserUpdateForm(instance=request.user)

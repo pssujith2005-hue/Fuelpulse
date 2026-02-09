@@ -17,13 +17,12 @@ class CustomUserCreationForm(UserCreationForm):
 class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['username', 'email', 'phone_number', 'profile_photo'] # Added profile_photo
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'phone_number']
+        fields = ['username', 'email', 'phone_number', 'profile_photo']
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control bg-dark text-white border-secondary', 'readonly': 'readonly'}),
             'email': forms.EmailInput(attrs={'class': 'form-control bg-dark text-white border-secondary'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control bg-dark text-white border-secondary'}),
+            'profile_photo': forms.FileInput(attrs={'class': 'form-control bg-dark text-white border-secondary', 'accept': 'image/*'}),
         }
 
 

@@ -85,20 +85,31 @@
                     <td class="text-end pe-4">
                         <div class="btn-group">
                             {% if u.is_active %}
-                                <a href="{% url 'toggle_user_status' u.id %}" class="btn btn-sm btn-outline-warning" title="Suspend User">
-                                    <i class="fas fa-ban"></i>
-                                </a>
+                                <form method="post" action="{% url 'toggle_user_status' u.id %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-warning" title="Suspend User"
+                                            onclick="return confirm('Are you sure you want to suspend {{ u.username }}?');">
+                                        <i class="fas fa-ban"></i>
+                                    </button>
+                                </form>
                             {% else %}
-                                <a href="{% url 'toggle_user_status' u.id %}" class="btn btn-sm btn-outline-success" title="Reactivate User">
-                                    <i class="fas fa-check"></i>
-                                </a>
+                                <form method="post" action="{% url 'toggle_user_status' u.id %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-success" title="Reactivate User"
+                                            onclick="return confirm('Are you sure you want to reactivate {{ u.username }}?');">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </form>
                             {% endif %}
 
-                            <a href="{% url 'delete_user' u.id %}" class="btn btn-sm btn-outline-danger" 
-                               onclick="return confirm('⚠️ DANGER: This will permanently delete {{ u.username }} and all their data.');"
-                               title="Delete Account">
-                                <i class="fas fa-trash"></i>
-                            </a>
+                            <form method="post" action="{% url 'delete_user' u.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                        onclick="return confirm('⚠️ DANGER: This will permanently delete {{ u.username }} and all their data.');"
+                                        title="Delete Account">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
                         </div>
                     </td>
                 </tr>
