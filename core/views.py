@@ -285,7 +285,7 @@ def dashboard(request):
     }
 
     return render(request, 'core/dashboard.html', context)
-    client = OpenAI(api_key="AIzaSyAqaSxZz876DrtFBnfkqYaj5zVPI4bCnt8") 
+    client = OpenAI(api_key="AIzaSyBdtEPbkBn7Eq_PbXmcGyrUawXBRCcw4H4") 
 # core/views.py
 @login_required
 def analytics_dashboard(request):
@@ -1189,37 +1189,69 @@ def custom_logout_view(request):
 
     # 3. Redirect to the determined page
     return redirect(next_page)
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
+from .models import Vehicle, FuelLog
+import json
+
 @login_required
 def what_if_analysis(request):
+    """
+    Enhanced logic for What-If Analysis.
+    Ensures ALL vehicles are displayed, even if they lack sufficient fuel logs.
+    """
     vehicles = Vehicle.objects.filter(owner=request.user)
     analysis_data = []
     total_savings = 0
 
     for v in vehicles:
-        actual_fuel_cost = FuelLog.objects.filter(vehicle=v).aggregate(Sum('total_cost'))['total_cost__sum'] or 0
-        dist = v.current_odometer 
+        # Fetch logs to determine tracking distance
+        logs = FuelLog.objects.filter(vehicle=v).order_by('odometer_reading')
+        vehicle_name = f"{v.make} {v.model_name}"
+        target_cpk = float(v.target_cost_per_km) if v.target_cost_per_km else 0
+        
+        # Default state for vehicles with insufficient data
+        row_data = {
+            'vehicle': vehicle_name,
+            'actual': 0.0,
+            'ideal': 0.0,
+            'savings': 0.0,
+            'distance': 0.0,
+            'target': target_cpk,
+            'has_data': False
+        }
 
-        if actual_fuel_cost > 0 and dist > 0:
-            actual_fuel_float = float(actual_fuel_cost)
-            ideal_cost = dist * v.target_cost_per_km
-            savings = actual_fuel_float - ideal_cost
+        if logs.count() >= 2:
+            first_log = logs.first()
+            last_log = logs.last()
             
-            if savings < 0: savings = 0
+            dist = float(last_log.odometer_reading - first_log.odometer_reading)
+            actual_fuel_cost = logs.exclude(id=first_log.id).aggregate(Sum('total_cost'))['total_cost__sum'] or 0
             
-            total_savings += savings
-            
-            analysis_data.append({
-                'vehicle': f"{v.make} {v.model_name}",
-                'actual': round(actual_fuel_float, 2),
-                'ideal': round(ideal_cost, 2),
-                'savings': round(savings, 2)
-            })
+            if dist > 0 and target_cpk > 0:
+                actual_fuel_float = float(actual_fuel_cost)
+                ideal_cost = dist * target_cpk
+                savings = max(0, actual_fuel_float - ideal_cost)
+                
+                total_savings += savings
+                
+                row_data.update({
+                    'actual': round(actual_fuel_float, 2),
+                    'ideal': round(ideal_cost, 2),
+                    'savings': round(savings, 2),
+                    'distance': round(dist, 1),
+                    'has_data': True
+                })
+        
+        analysis_data.append(row_data)
 
     context = {
         'analysis': analysis_data,
         'fleet_savings': round(total_savings, 2),
-        'labels': json.dumps([x['vehicle'] for x in analysis_data]),
-        'savings_data': json.dumps([x['savings'] for x in analysis_data])
+        'labels': json.dumps([x['vehicle'] for x in analysis_data if x['has_data']]),
+        'savings_data': json.dumps([x['savings'] for x in analysis_data if x['has_data']])
     }
-    # FIXED PATH: Changed 'core/admin/what_if.html' -> 'core/what_if.html'
+    
     return render(request, 'core/what_if.html', context)

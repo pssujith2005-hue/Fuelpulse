@@ -5,7 +5,6 @@
     <div class="col-12 d-flex justify-content-between align-items-center">
         <div>
             <h2 class="text-white fw-bold">Total Cost of Ownership (TCO)</h2>
-            <p class="text-muted mb-0">Financial breakdown of your entire garage.</p>
         </div>
         <a href="{% url 'analytics_dashboard' %}" class="btn btn-outline-secondary btn-sm">
             <i class="fas fa-arrow-left me-1"></i> Back
@@ -13,16 +12,19 @@
     </div>
 </div>
 
+
+<!-- DETAILED TCO TABLE -->
 <div class="stats-card p-0 overflow-hidden">
     <div class="table-responsive">
         <table class="table table-dark table-hover align-middle mb-0">
             <thead class="bg-black">
                 <tr class="text-muted small text-uppercase border-bottom border-secondary">
-                    <th class="py-3 ps-4">Vehicle</th>
+                    <th class="py-3 ps-4">Vehicle Details</th>
+                    <th class="text-end">Capital Cost<br><small>(Purchase-Resale)</small></th>
                     <th class="text-end">Fuel Cost</th>
-                    <th class="text-end">Other Expenses</th>
+                    <th class="text-end">Maintenance<br>& Taxes</th>
                     <th class="text-end text-white">Grand Total (TCO)</th>
-                    <th class="text-end pe-4">Actual Cost/KM</th>
+                    <th class="text-end pe-4">Cost / KM</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,23 +34,38 @@
                         <div class="fw-bold text-white">{{ row.vehicle.make }} {{ row.vehicle.model_name }}</div>
                         <small class="text-muted">{{ row.vehicle.license_plate }}</small>
                     </td>
+                    <td class="text-end text-muted">
+                        ₹ {{ row.capital_cost|default:"0" }}
+                    </td>
                     <td class="text-end text-warning">₹ {{ row.fuel_cost }}</td>
                     <td class="text-end text-danger">₹ {{ row.expense_cost }}</td>
-                    <td class="text-end fw-bold fs-5">₹ {{ row.total_tco }}</td>
+                    <td class="text-end">
+                        <span class="fw-bold fs-5 text-white">₹ {{ row.total_tco }}</span>
+                    </td>
                     <td class="text-end pe-4">
-                        <span class="badge bg-dark border border-secondary text-info">₹ {{ row.actual_cpk }} / km</span>
+                        <div class="badge bg-dark border border-secondary text-info p-2">
+                            ₹ {{ row.actual_cpk }} / km
+                        </div>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" class="text-center py-5 text-muted">
+                    <td colspan="6" class="text-center py-5 text-muted">
                         <i class="fas fa-chart-pie fa-2x mb-3 opacity-50"></i><br>
-                        No financial data available yet.
+                        No financial data available yet to calculate TCO.
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+</div>
+
+<!-- FORMULA EXPLANER -->
+<div class="mt-4 p-3 bg-dark bg-opacity-50 rounded border border-secondary border-opacity-25">
+    <small class="text-muted">
+        <i class="fas fa-info-circle me-1"></i> <strong>TCO Logic:</strong> Calculated as (Purchase Price - Estimated Resale Value) + Total Fuel Spent + All Maintenance & Insurance Logs. 
+        This gives you the true economic cost of owning the vehicle over its lifetime.
+    </small>
 </div>
 {% endblock %}

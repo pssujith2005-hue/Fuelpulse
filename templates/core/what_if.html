@@ -5,7 +5,7 @@
     <div class="col-12 d-flex justify-content-between align-items-center">
         <div>
             <h2 class="text-white fw-bold mb-1">"What If" Analytics Engine</h2>
-            <p class="text-muted">Simulation: Comparing actual spending vs. your strategic targets.</p>
+            <p class="text-muted">Simulation: Comparing actual spending vs. strategic targets and future projections.</p>
         </div>
         <a href="{% url 'analytics_dashboard' %}" class="btn btn-outline-secondary btn-sm">
             <i class="fas fa-arrow-left me-1"></i> Back
@@ -13,64 +13,186 @@
     </div>
 </div>
 
-<div class="row mb-5">
-    <div class="col-md-12">
-        <div class="stats-card border-success border-start border-5 bg-gradient-dark position-relative overflow-hidden">
-            <div class="d-flex align-items-center justify-content-between position-relative" style="z-index: 2;">
+<!-- TOP SUMMARY CARDS -->
+<div class="row mb-4">
+    <div class="col-md-6 mb-3 mb-md-0">
+        <!-- Conditional Card Color: Red/Warning if there are "Savings" to be found (Waste), Green if on target -->
+        <div class="stats-card border-start border-5 bg-gradient-dark h-100 {% if fleet_savings > 0 %}border-danger{% else %}border-success{% endif %}">
+            <div class="d-flex align-items-center justify-content-between">
                 <div>
-                    <h6 class="text-success text-uppercase small fw-bold mb-2">Total Potential Savings</h6>
-                    <h1 class="text-white display-4 fw-bold mb-0">₹ {{ fleet_savings }}</h1>
-                    <p class="text-white-50 mt-2 mb-0">Money you could have saved if all vehicles met their targets.</p>
+                    <h6 class="{% if fleet_savings > 0 %}text-danger{% else %}text-success{% endif %} text-uppercase small fw-bold mb-2">
+                        {% if fleet_savings > 0 %}Total Excess Spending{% else %}Fleet Efficiency{% endif %}
+                    </h6>
+                    <h2 class="text-white fw-bold mb-0">₹ {{ fleet_savings }}</h2>
+                    <p class="text-white-50 small mt-2 mb-0">
+                        {% if fleet_savings > 0 %}
+                        Money lost due to poor vehicle performance.
+                        {% else %}
+                        Great! All vehicles are performing within target.
+                        {% endif %}
+                    </p>
                 </div>
-                <div class="rounded-circle bg-success bg-opacity-25 p-4 d-none d-md-block">
-                    <i class="fas fa-piggy-bank fa-3x text-success"></i>
+                <div class="rounded-circle {% if fleet_savings > 0 %}bg-danger{% else %}bg-success{% endif %} bg-opacity-25 p-3">
+                    <i class="fas {% if fleet_savings > 0 %}fa-frown{% else %}fa-smile{% endif %} fa-2x {% if fleet_savings > 0 %}text-danger{% else %}text-success{% endif %}"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="stats-card border-warning border-start border-5 bg-gradient-dark h-100">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-warning text-uppercase small fw-bold mb-2">Projected Fleet Impact</h6>
+                    <h2 class="text-white fw-bold mb-0" id="totalProjectedCost">₹ --</h2>
+                    <p class="text-white-50 small mt-2 mb-0">Estimated spend based on your simulation below.</p>
+                </div>
+                <div class="rounded-circle bg-warning bg-opacity-25 p-3">
+                    <i class="fas fa-chart-line fa-2x text-warning"></i>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- INTERACTIVE SIMULATOR -->
+<div class="stats-card mb-4 border-primary border-top border-3">
+    <div class="d-flex align-items-center mb-4">
+        <div class="bg-primary bg-opacity-10 p-2 rounded me-3">
+            <i class="fas fa-sliders-h text-primary"></i>
+        </div>
+        <h5 class="text-white fw-bold mb-0">Predictive Scenario Planner</h5>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <label class="form-label text-muted small fw-bold text-uppercase">Fuel Price Change (%)</label>
+            <div class="input-group">
+                <span class="input-group-text bg-dark border-secondary text-muted"><i class="fas fa-gas-pump"></i></span>
+                <input type="number" id="fuelPriceInput" class="form-control bg-dark text-white border-secondary" value="0" step="1">
+                <span class="input-group-text bg-dark border-secondary text-muted">%</span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label text-muted small fw-bold text-uppercase">Monthly Distance Growth</label>
+            <div class="input-group">
+                <span class="input-group-text bg-dark border-secondary text-muted"><i class="fas fa-road"></i></span>
+                <input type="number" id="distanceInput" class="form-control bg-dark text-white border-secondary" value="0" step="100">
+                <span class="input-group-text bg-dark border-secondary text-muted">KM</span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label text-muted small fw-bold text-uppercase">Operational Efficiency</label>
+            <select id="efficiencyInput" class="form-select bg-dark text-white border-secondary">
+                <option value="1">Stay as is</option>
+                <option value="0.95">Improve by 5% (Better driving)</option>
+                <option value="1.10">Worsen by 10% (Aging fleet)</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- BREAKDOWN TABLE -->
 <div class="stats-card">
-    <h5 class="text-white fw-bold mb-4"><i class="fas fa-list-ul me-2 text-primary"></i> Vehicle Breakdown</h5>
+    <h5 class="text-white fw-bold mb-4"><i class="fas fa-list-ul me-2 text-primary"></i> Detailed Comparison</h5>
     <div class="table-responsive">
-        <table class="table table-dark table-hover align-middle mb-0">
+        <table class="table table-dark table-hover align-middle mb-0" id="analysisTable">
             <thead>
                 <tr class="text-muted small text-uppercase">
                     <th>Vehicle</th>
-                    <th class="text-end">Actual Fuel Spend</th>
-                    <th class="text-end">Target Spend (Ideal)</th>
+                    <th class="text-end">Distance</th>
+                    <th class="text-end">Actual Cost</th>
+                    <th class="text-end text-warning">Projected (Sim)</th>
                     <th class="text-end">Potential Savings</th>
                     <th class="text-end">Status</th>
                 </tr>
             </thead>
             <tbody>
                 {% for row in analysis %}
-                <tr>
+                <tr class="vehicle-row" 
+                    data-actual="{{ row.actual }}" 
+                    data-distance="{{ row.distance }}"
+                    data-target="{{ row.target }}"
+                    data-has-data="{{ row.has_data|yesno:'true,false' }}">
                     <td>
                         <span class="text-white fw-bold">{{ row.vehicle }}</span>
+                        {% if not row.has_data %}
+                        <div class="text-warning x-small"><i class="fas fa-exclamation-circle"></i> Needs 2+ logs</div>
+                        {% else %}
+                        <div class="text-muted x-small">Target: ₹{{ row.target }}/km</div>
+                        {% endif %}
                     </td>
-                    <td class="text-end">₹ {{ row.actual }}</td>
-                    <td class="text-end text-info">₹ {{ row.ideal }}</td>
-                    <td class="text-end fw-bold text-success">
-                        {% if row.savings > 0 %}
+                    {% if row.has_data %}
+                        <td class="text-end text-white-50">{{ row.distance }} KM</td>
+                        <td class="text-end text-white-50">₹ {{ row.actual }}</td>
+                        <td class="text-end fw-bold text-warning projected-cell">₹ --</td>
+                        <td class="text-end fw-bold {% if row.savings > 0 %}text-danger{% else %}text-success{% endif %}">
                             ₹ {{ row.savings }}
-                        {% else %}
-                            <span class="text-muted">0</span>
-                        {% endif %}
-                    </td>
-                    <td class="text-end">
-                        {% if row.savings > 0 %}
-                            <span class="badge bg-danger bg-opacity-10 text-danger">Over Budget</span>
-                        {% else %}
-                            <span class="badge bg-success bg-opacity-10 text-success">On Target</span>
-                        {% endif %}
-                    </td>
+                            {% if row.savings > 0 %}
+                            <div class="text-danger italic mt-1" style="font-size: 0.75rem;">
+                                <i class="fas fa-tools me-1"></i> Vehicle performance is low, check it for service center.
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            {% if row.savings > 0 %}
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2">
+                                    <i class="fas fa-arrow-up me-1"></i> Over Budget
+                                </span>
+                            {% else %}
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2">
+                                    <i class="fas fa-check me-1"></i> Efficient
+                                </span>
+                            {% endif %}
+                        </td>
+                    {% else %}
+                        <td colspan="5" class="text-end text-muted small italic">Insufficient data for tracking.</td>
+                    {% endif %}
                 </tr>
-                {% empty %}
-                <tr><td colspan="5" class="text-center py-4 text-muted">No sufficient data for simulation.</td></tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fuelInput = document.getElementById('fuelPriceInput');
+        const distGrowthInput = document.getElementById('distanceInput');
+        const effInput = document.getElementById('efficiencyInput');
+        const rows = document.querySelectorAll('.vehicle-row');
+        const totalDisplay = document.getElementById('totalProjectedCost');
+
+        function updateSimulation() {
+            let totalProjected = 0;
+            const priceFactor = 1 + (parseFloat(fuelInput.value) / 100);
+            const extraDist = parseFloat(distGrowthInput.value) || 0;
+            const effFactor = parseFloat(effInput.value);
+
+            rows.forEach(row => {
+                if (row.dataset.hasData === 'true') {
+                    const actual = parseFloat(row.dataset.actual);
+                    const distanceLogged = parseFloat(row.dataset.distance);
+                    
+                    if(distanceLogged > 0) {
+                        const actualCPK = actual / distanceLogged;
+                        const projectedCPK = actualCPK * priceFactor * effFactor;
+                        const totalProjectedDistance = distanceLogged + extraDist;
+                        let projected = totalProjectedDistance * projectedCPK;
+
+                        row.querySelector('.projected-cell').innerText = '₹ ' + Math.round(projected).toLocaleString();
+                        totalProjected += projected;
+                    }
+                }
+            });
+
+            totalDisplay.innerText = '₹ ' + Math.round(totalProjected).toLocaleString();
+        }
+
+        [fuelInput, distGrowthInput, effInput].forEach(el => {
+            el.addEventListener('input', updateSimulation);
+        });
+
+        updateSimulation();
+    });
+</script>
 {% endblock %}
