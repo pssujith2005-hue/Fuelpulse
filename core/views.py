@@ -285,7 +285,7 @@ def dashboard(request):
     }
 
     return render(request, 'core/dashboard.html', context)
-    client = OpenAI(api_key="AIzaSyBdtEPbkBn7Eq_PbXmcGyrUawXBRCcw4H4") 
+    client = OpenAI(api_key="AIzaSyBOUf9NQxqpi_NOPFIpUcH4M_8gn0QyrCw") 
 # core/views.py
 @login_required
 def analytics_dashboard(request):

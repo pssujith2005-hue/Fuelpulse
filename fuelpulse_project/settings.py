@@ -108,4 +108,4 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # --- AI CONFIGURATION ---
 # Your Google Gemini API Key
-GEMINI_API_KEY = "AIzaSyBdtEPbkBn7Eq_PbXmcGyrUawXBRCcw4H4"
+GEMINI_API_KEY = "AIzaSyBOUf9NQxqpi_NOPFIpUcH4M_8gn0QyrCw"

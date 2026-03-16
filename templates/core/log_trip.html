@@ -6,13 +6,13 @@
     /* --- SASSY DASHBOARD THEME --- */
     :root {
         --bg-deep: #000000;
-        --card-bg: rgba(15, 15, 20, 0.6);
-        --border-glass: rgba(255, 255, 255, 0.1);
+        --card-bg: rgba(15, 15, 20, 0.7);
+        --border-glass: rgba(255, 255, 255, 0.08);
         --text-main: #ffffff;
-        --text-muted: #9ca3af;
-        --accent-gradient: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #ffffff 100%);
-        --input-bg: rgba(255, 255, 255, 0.05);
-        --neon-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+        --text-muted: #ffffff; /* Changed to white as requested */
+        --accent-blue: #3b82f6;
+        --accent-gradient: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
+        --input-bg: #000000; /* Changed to solid black for dropdown box */
     }
 
     /* Override Base Styles */
@@ -20,248 +20,354 @@
         background-color: var(--bg-deep) !important;
         color: var(--text-main);
         font-family: 'Outfit', sans-serif;
-        overflow-x: hidden;
     }
 
-    /* Card Styling */
+    /* 16:9 Cinematic Card */
     .sassy-card {
         background: var(--card-bg);
         border: 1px solid var(--border-glass);
-        border-radius: 24px;
-        padding: 2.5rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.6);
         position: relative;
         overflow: hidden;
-        backdrop-filter: blur(10px);
+        backdrop-filter: blur(15px);
+        aspect-ratio: 16 / 9;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 520px;
+        transition: transform 0.3s ease;
     }
-    
-    /* Top Highlight Line */
+
+    .sassy-card:hover {
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    /* Top Glow Line */
     .sassy-card::before {
         content: '';
         position: absolute;
-        top: 0; left: 0; width: 100%; height: 4px;
+        top: 0; left: 0; width: 100%; height: 3px;
         background: var(--accent-gradient);
+        z-index: 10;
+    }
+
+    /* --- TECH CAR ANIMATION --- */
+    .animation-wrapper {
+        width: 100%;
+        height: 30px;
+        position: relative;
+        margin-bottom: 0.5rem;
+    }
+
+    .data-track {
+        position: absolute;
+        bottom: 5px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.4), transparent);
+    }
+
+    .running-car {
+        position: absolute;
+        bottom: -2px;
+        left: -10%;
+        color: var(--accent-blue);
+        font-size: 1.4rem;
+        filter: drop-shadow(0 0 10px var(--accent-blue));
+        animation: hyperDrive 8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+    }
+
+    @keyframes hyperDrive {
+        0% { left: -10%; opacity: 0; }
+        5% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { left: 110%; opacity: 0; }
+    }
+
+    /* Sidebar Styles (Right Side) */
+    .info-panel {
+        background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+        border-left: 1px solid var(--border-glass);
+        padding: 2rem;
+        height: 100%;
+        border-radius: 0 20px 20px 0;
+    }
+
+    .stat-mini-card {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--border-glass);
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
     }
 
     /* Typography */
-    .gradient-text {
-        background: linear-gradient(to right, #ffffff, #60a5fa);
+    .gradient-header {
+        background: linear-gradient(to bottom, #ffffff, #94a3b8);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         font-weight: 800;
+        letter-spacing: -0.5px;
     }
 
-    /* Icon Box */
-    .icon-box {
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        background: rgba(15, 15, 20, 0.8);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1.5rem auto;
-        position: relative;
-        border: 1px solid rgba(255,255,255,0.1);
-        box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
-        animation: pulseIcon 3s infinite alternate;
-    }
-    .icon-box i {
-        font-size: 1.8rem;
-        background: linear-gradient(to bottom, #ffffff, #3b82f6);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-    @keyframes pulseIcon {
-        0% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); }
-        100% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.5); }
+    /* Form Area */
+    .form-content-scroll {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding-right: 10px;
+        margin-top: 1rem;
     }
 
-    /* Form Inputs */
-    .form-control, .form-select, input, select, textarea {
-        background-color: var(--input-bg) !important;
-        border: 1px solid var(--border-glass) !important;
-        color: white !important;
-        padding: 12px 15px !important;
-        border-radius: 12px !important;
-        font-size: 0.95rem !important;
-        transition: all 0.3s ease;
-    }
-    
-    .form-control:focus, .form-select:focus, input:focus, select:focus {
-        background-color: rgba(255,255,255,0.1) !important;
-        border-color: #3b82f6 !important;
-        box-shadow: 0 0 15px rgba(59, 130, 246, 0.3) !important;
-        outline: none;
-    }
+    .form-content-scroll::-webkit-scrollbar { width: 3px; }
+    .form-content-scroll::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.3); border-radius: 10px; }
 
-    /* Fix Dropdown Options */
-    option {
-        background-color: #000000 !important;
-        color: white !important;
-        padding: 10px;
-    }
-
-    /* Labels */
     label {
-        color: #94a3b8;
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
+        color: #ffffff !important; /* All letters in form white */
+        font-size: 0.7rem;
+        font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 1.5px;
+        margin-bottom: 0.4rem;
+        display: block;
+    }
+
+    .form-control, .form-select {
+        background-color: #000000 !important; /* Dropdown box color black */
+        border: 1px solid var(--border-glass) !important;
+        color: #ffffff !important; /* Input letters white */
+        border-radius: 10px !important;
+        font-size: 0.9rem !important;
+        padding: 10px 14px !important;
+    }
+
+    /* Dropdown Options Styling */
+    select option {
+        background-color: #000000 !important; /* Dropdown option background black */
+        color: #ffffff !important; /* Dropdown option text white */
+    }
+
+    .form-control:focus {
+        border-color: var(--accent-blue) !important;
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.2) !important;
+        background: #000000 !important;
     }
 
     /* Buttons */
-    .btn-sassy {
+    .btn-sassy-main {
         background: var(--accent-gradient);
-        border: none;
-        color: black;
-        font-weight: 700;
-        padding: 14px 30px;
-        border-radius: 12px;
-        transition: 0.3s;
-        width: 100%;
-        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-    }
-    .btn-sassy:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
-        color: black;
-    }
-
-    .btn-sassy-outline {
-        background: transparent;
-        border: 1px solid rgba(255,255,255,0.2);
-        color: #e2e8f0;
-        font-weight: 600;
-        padding: 14px 30px;
-        border-radius: 12px;
-        transition: 0.3s;
-        width: 100%;
-        display: block;
-        text-align: center;
-        text-decoration: none;
-    }
-    .btn-sassy-outline:hover {
-        border-color: #3b82f6;
         color: white;
-        background: rgba(59, 130, 246, 0.1);
+        font-weight: 700;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 10px;
+        transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    /* Animation */
-    .fade-in-up {
-        animation: fadeInUp 0.6s ease-out forwards;
-        opacity: 0;
-        transform: translateY(20px);
+    .btn-sassy-main:hover {
+        transform: scale(1.02);
+        box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
     }
-    @keyframes fadeInUp {
-        to { opacity: 1; transform: translateY(0); }
+
+    .btn-sassy-ghost {
+        background: transparent;
+        border: 1px solid var(--border-glass);
+        color: white; /* Changed to white */
+        padding: 12px 24px;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    .btn-sassy-ghost:hover {
+        color: white;
+        border-color: white;
+    }
+
+    /* Status Indicator */
+    .status-badge {
+        font-size: 0.65rem;
+        padding: 2px 8px;
+        border-radius: 20px;
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        color: var(--accent-blue);
+        text-transform: uppercase;
+        font-weight: 700;
     }
 </style>
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            
-            <!-- Main Card -->
-            <div class="sassy-card fade-in-up">
+<div class="container-fluid px-4 py-5">
+    <div class="row g-4 align-items-start">
+        
+        <!-- Left Side: Cinematic 16:9 Form -->
+        <div class="col-xl-8 col-lg-9">
+            <div class="sassy-card">
                 
-                <!-- Header -->
-                <div class="text-center mb-4">
-                    <div class="icon-box">
-                        <i class="fas fa-location-arrow"></i>
+                <!-- Animation Layer -->
+                <div class="animation-wrapper">
+                    <div class="data-track"></div>
+                    <div class="running-car">
+                        <i class="fas fa-car-side"></i>
                     </div>
-                    <h2 class="gradient-text mb-2">Log New Trip</h2>
-                    <p class="text-white-50 small">Track your journey to calculate costs accurately.</p>
                 </div>
 
-                <form method="post">
-                    {% csrf_token %}
-                    
-                    <!-- Global Errors -->
-                    {% if form.errors %}
-                        <div class="alert alert-danger bg-danger bg-opacity-10 border border-danger text-danger rounded-3 mb-4 small">
-                            <ul class="mb-0 ps-3">
-                            {% for field in form %}
-                                {% for error in field.errors %}
-                                    <li><strong>{{ field.label }}:</strong> {{ error }}</li>
-                                {% endfor %}
-                            {% endfor %}
-                            {% for error in form.non_field_errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                            </ul>
-                        </div>
-                    {% endif %}
-
-                    <!-- Vehicle Selection -->
-                    <div class="mb-4">
-                        <label>Select Vehicle</label>
-                        {{ form.vehicle }} 
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-end mb-2">
+                    <div>
+                        <h2 class="gradient-header mb-0">LOG NEW TRIP</h2>
+                        <p class="text-white small mb-0">Record your travel data for performance analysis.</p>
                     </div>
-
-                    <!-- Date & Purpose -->
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label for="{{ form.date.id_for_label }}">Date</label>
-                            {{ form.date }}
-                        </div>
-                        <div class="col-md-6">
-                            <label for="{{ form.purpose.id_for_label }}">Purpose</label>
-                            {% if form.purpose %}
-                                {{ form.purpose }}
-                            {% else %}
-                                <input type="text" name="purpose" class="form-control" placeholder="Trip purpose...">
-                            {% endif %}
-                        </div>
+                    <div class="text-end">
+                        <i class="fas fa-route fa-2x opacity-25" style="color: white;"></i>
                     </div>
+                </div>
 
-                    <!-- Odometer Readings -->
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label>Start Odometer (km)</label>
-                            {{ form.start_odometer }}
+                <!-- Scrollable Form Container -->
+                <div class="form-content-scroll">
+                    <form method="post" id="tripForm">
+                        {% csrf_token %}
+                        
+                        {% if form.errors %}
+                        <div class="alert alert-danger bg-danger bg-opacity-10 border-0 text-danger small mb-4">
+                            <i class="fas fa-exclamation-triangle me-2"></i> Please correct the errors below.
                         </div>
-                        <div class="col-md-6">
-                            <label>End Odometer (km)</label>
-                            {{ form.end_odometer }}
-                        </div>
-                    </div>
+                        {% endif %}
 
-                    <!-- Notes -->
-                    <div class="mb-4">
-                        <label>Trip Notes (Optional)</label>
-                        {{ form.notes }}
-                    </div>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label>Vehicle Designation</label>
+                                {{ form.vehicle }}
+                            </div>
 
-                    <!-- Actions -->
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <a href="{% url 'dashboard' %}" class="btn-sassy-outline">Cancel</a>
+                            <div class="col-md-6">
+                                <label>Deployment Date</label>
+                                {{ form.date }}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>Operation Purpose</label>
+                                {% if form.purpose %}
+                                    {{ form.purpose }}
+                                {% else %}
+                                    <input type="text" name="purpose" class="form-control" placeholder="e.g. Logistics, Personal...">
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>Odometer (Start)</label>
+                                {{ form.start_odometer }}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>Odometer (End)</label>
+                                {{ form.end_odometer }}
+                            </div>
+
+                            <div class="col-12">
+                                <label>Mission Notes</label>
+                                {{ form.notes }}
+                            </div>
                         </div>
-                        <div class="col-6">
-                            <button type="submit" class="btn-sassy">
-                                <i class="fas fa-save me-2"></i> Save Trip
+
+                        <!-- Action Footer -->
+                        <div class="d-flex gap-3 mt-4 mb-3">
+                            <a href="{% url 'dashboard' %}" class="btn-sassy-ghost flex-grow-1 text-center">Discard</a>
+                            <button type="submit" class="btn-sassy-main flex-grow-2 px-5">
+                                <i class="fas fa-paper-plane me-2"></i> COMMIT TRIP DATA
                             </button>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-            
         </div>
+
+        <!-- Right Side: Supplemental Data -->
+        <div class="col-xl-4 col-lg-3 d-none d-lg-block">
+            <div class="info-panel">
+                <h5 class="text-uppercase fw-bold mb-4" style="letter-spacing: 2px; font-size: 0.8rem; color: var(--accent-blue);">System Information</h5>
+                
+                <!-- NEW: Dynamic Odometer Card -->
+                <div class="stat-mini-card" id="odoCard" style="display: none; border-left: 3px solid var(--accent-blue);">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="text-white small text-uppercase fw-bold">Current Odometer</div>
+                        <span class="status-badge">Live Sync</span>
+                    </div>
+                    <div class="h4 mb-0 text-white fw-bold"><span id="odoValue">0</span> <small class="opacity-50 fs-6">KM</small></div>
+                </div>
+
+                <div class="stat-mini-card">
+                    <div class="text-white small text-uppercase fw-bold mb-1">Odometer Tip</div>
+                    <div class="text-white">Always verify your end reading to ensure accuracy in your <span class="text-primary">TCO Report</span>.</div>
+                </div>
+
+                <div class="stat-mini-card">
+                    <div class="text-white small text-uppercase fw-bold mb-1">Fuel Integration</div>
+                    <div class="text-white">Trips logged here are automatically correlated with fuel logs to calculate MPG.</div>
+                </div>
+
+                <div class="mt-5 text-center opacity-50">
+                    <i class="fas fa-shield-alt fa-3x mb-3 text-white"></i>
+                    <p class="small text-white">Secure Data Encryption Active</p>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
+<!-- Odometer Data Mapping -->
+<script id="vehicle-data" type="application/json">
+{
+    {% for vehicle in form.vehicle.field.queryset %}
+    "{{ vehicle.id }}": {{ vehicle.current_odometer }}{% if not forloop.last %},{% endif %}
+    {% endfor %}
+}
+</script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Enforce dark theme styles on any Django-rendered inputs
+        const vehicleSelect = document.querySelector('select[name="vehicle"]');
+        const startOdoInput = document.querySelector('input[name="start_odometer"]');
+        const odoCard = document.getElementById('odoCard');
+        const odoValue = document.getElementById('odoValue');
+        
+        // Parse the vehicle data from the JSON script tag
+        const vehicleOdometers = JSON.parse(document.getElementById('vehicle-data').textContent);
+
+        function updateOdometerDisplay() {
+            const vehicleId = vehicleSelect.value;
+            if (vehicleId && vehicleOdometers[vehicleId] !== undefined) {
+                const reading = vehicleOdometers[vehicleId];
+                
+                // Show and update the info panel card
+                odoCard.style.display = 'block';
+                odoValue.textContent = reading.toLocaleString();
+                
+                // Auto-fill the Start Odometer field if it's currently empty or 0
+                if (!startOdoInput.value || startOdoInput.value == "0") {
+                    startOdoInput.value = reading;
+                }
+            } else {
+                odoCard.style.display = 'none';
+            }
+        }
+
+        // Listen for selection changes
+        if (vehicleSelect) {
+            vehicleSelect.addEventListener('change', updateOdometerDisplay);
+            // Run once on load in case a vehicle is pre-selected
+            updateOdometerDisplay();
+        }
+
+        // Enforce form classes on Django widgets
         const inputs = document.querySelectorAll('input, select, textarea');
         inputs.forEach(input => {
             input.classList.add('form-control');
             if (input.tagName === 'SELECT') {
                 input.classList.add('form-select');
-                // Custom arrow for selects
                 input.style.backgroundImage = `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e")`;
                 input.style.backgroundRepeat = 'no-repeat';
                 input.style.backgroundPosition = 'right 0.75rem center';

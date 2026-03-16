@@ -2,133 +2,195 @@
 {% load static %}
 
 {% block content %}
+<!-- Chart.js for data visualization -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-    /* --- PROFESSIONAL SASSY THEME --- */
+    /* --- SASSY ANALYTICS THEME --- */
     :root {
-        --bg-core: #000000;
-        --card-surface: rgba(10, 10, 10, 0.8);
-        --border-light: rgba(255, 255, 255, 0.1);
+        --bg-deep: #000000;
+        --card-bg: rgba(15, 15, 20, 0.7);
+        --border-glass: rgba(255, 255, 255, 0.08);
+        --text-main: #ffffff;
         --accent-blue: #3b82f6;
-        --accent-glow: rgba(59, 130, 246, 0.15);
-        --text-primary: #ffffff;
-        --text-secondary: #94a3b8;
+        --accent-red: #ef4444; /* Sassy Red */
+        --accent-gradient: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #ef4444 100%);
+        --input-bg: #000000;
     }
 
+    /* Override Base Styles */
     body, .main-content {
-        background-color: var(--bg-core) !important;
-        color: var(--text-primary);
-        font-family: 'Outfit', sans-serif; /* Assuming you have this font, otherwise system font */
+        background-color: var(--bg-deep) !important;
+        color: var(--text-main);
+        font-family: 'Outfit', sans-serif;
     }
 
-    /* Gradient Text Effect */
+    /* Sassy Card Styling */
+    .sassy-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(15px);
+        transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .sassy-card:hover {
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    /* Top Glow Line */
+    .sassy-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 3px;
+        background: var(--accent-gradient);
+        z-index: 10;
+    }
+
+    /* --- COLOR-SHIFTING CAR ANIMATION --- */
+    .animation-wrapper {
+        width: 100%;
+        height: 35px;
+        position: relative;
+        margin-bottom: 1rem;
+    }
+
+    .data-track {
+        position: absolute;
+        bottom: 5px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, #3b82f6 0%, #ef4444 100%); /* Blue to Red Track */
+        opacity: 0.4;
+    }
+
+    .running-car {
+        position: absolute;
+        bottom: -2px;
+        left: -10%;
+        font-size: 1.4rem;
+        animation: hyperDrive 8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+    }
+
+    @keyframes hyperDrive {
+        0% { 
+            left: -10%; 
+            opacity: 0; 
+            color: var(--accent-blue); 
+            filter: drop-shadow(0 0 10px var(--accent-blue));
+        }
+        10% { opacity: 1; }
+        50% { 
+            color: #8b5cf6; /* Transitioning purple */
+            filter: drop-shadow(0 0 15px #8b5cf6);
+        }
+        90% { opacity: 1; }
+        100% { 
+            left: 110%; 
+            opacity: 0; 
+            color: var(--accent-red); /* Ends at Red Sassy */
+            filter: drop-shadow(0 0 10px var(--accent-red));
+        }
+    }
+
+    /* Headers & Text */
+    .gradient-header {
+        background: linear-gradient(to bottom, #ffffff, #94a3b8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        text-transform: uppercase;
+    }
+
     .text-gradient {
         background: linear-gradient(135deg, #ffffff 0%, #3b82f6 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        background-clip: text;
+        font-weight: 800;
     }
 
-    /* Card Styling */
-    .glass-card {
-        background: var(--card-surface);
-        border: 1px solid var(--border-light);
-        border-radius: 24px;
-        padding: 2rem;
-        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5); /* Deep shadow */
-        position: relative;
-        overflow: hidden;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    .stat-mini-card {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--border-glass);
+        padding: 1.2rem;
+        border-radius: 12px;
     }
-
-    .glass-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px -10px var(--accent-glow);
-        border-color: rgba(59, 130, 246, 0.3);
-    }
-
-    /* Subtle top border gradient for pop */
-    .glass-card::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
-    }
-
-    /* Headers */
-    .section-title {
-        font-weight: 700;
-        letter-spacing: -0.5px;
-        margin-bottom: 0.5rem;
-    }
-
-    /* Custom Chart Tooltip Styles (Global override if needed, but Chart.js handles most) */
 </style>
 
-<div class="container-fluid py-4">
+<div class="container-fluid px-4 py-5">
     
-    <!-- Header Section -->
-    <div class="row g-4 mb-5 align-items-end">
+    <!-- Top Dashboard Header -->
+    <div class="row g-4 mb-5 align-items-center">
         <div class="col-md-8">
-            <h1 class="display-5 fw-bold text-white mb-1">Fleet Analytics</h1>
-            <p class="text-secondary mb-0" style="font-size: 1.1rem;">Financial breakdown and efficiency reports.</p>
+            <h1 class="gradient-header display-5 mb-0">ANALYTIC DASHBOARD</h1>
+            <p class="text-white small opacity-75">Financial breakdown and efficiency reports for your fleet.</p>
         </div>
         <div class="col-md-4 text-md-end">
-            <div class="glass-card py-3 px-4 d-inline-block text-start text-md-end" style="min-width: 250px;">
-                <div class="text-secondary small text-uppercase fw-bold tracking-wider mb-1">Total Spend (All Time)</div>
-                <div class="display-6 fw-bold text-gradient">₹ {{ total_spent|floatformat:2 }}</div>
+            <div class="stat-mini-card d-inline-block text-start" style="min-width: 280px;">
+                <div class="text-white small text-uppercase fw-bold mb-1 opacity-50" style="letter-spacing: 1px;">Total Fleet Spend</div>
+                <div class="h3 fw-bold text-gradient mb-0">₹ {{ total_spent|floatformat:2 }}</div>
             </div>
         </div>
     </div>
 
-    <!-- Charts Row -->
+    <!-- Charts Section -->
     <div class="row g-4">
         
-        <!-- Trend Chart -->
+        <!-- Main Trend Chart -->
         <div class="col-lg-8">
-            <div class="glass-card h-100">
+            <div class="sassy-card">
+                
+                <!-- Color Shifting Animation -->
+                <div class="animation-wrapper">
+                    <div class="data-track"></div>
+                    <div class="running-car">
+                        <i class="fas fa-car-side"></i>
+                    </div>
+                </div>
+
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
-                        <h4 class="section-title text-white">Monthly Spending Trend</h4>
-                        <div class="text-secondary small">Fuel logs & Expense logs combined</div>
+                        <h4 class="fw-bold text-white mb-0">MONTHLY SPENDING TREND</h4>
+                        <div class="text-white small opacity-50">Combined Fuel and Maintenance costs</div>
                     </div>
-                    <div class="p-2 rounded-circle bg-dark border border-secondary">
-                        <i class="fas fa-chart-line text-primary"></i> <!-- Assuming FontAwesome -->
+                    <div class="text-end opacity-20">
+                        <i class="fas fa-chart-line fa-2x text-white"></i>
                     </div>
                 </div>
                 
-                <div style="height: 350px; width: 100%;">
+                <div style="height: 380px; width: 100%;">
                     <canvas id="trendChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- Category Chart -->
+        <!-- Category Distribution Chart -->
         <div class="col-lg-4">
-            <div class="glass-card h-100">
-                <h4 class="section-title text-white mb-4">Cost Distribution</h4>
+            <div class="sassy-card h-100 d-flex flex-column">
+                <h4 class="fw-bold text-white mb-4">COST DISTRIBUTION</h4>
                 
-                <div style="height: 280px; position: relative; margin-bottom: 2rem;">
+                <div style="height: 300px; position: relative; margin-bottom: 2rem;">
                     <canvas id="categoryChart"></canvas>
                     
-                    <!-- Center Text Overlay -->
+                    <!-- Center Overlay -->
                     <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none;">
-                        <div class="text-secondary small text-uppercase">Total</div>
-                        <div class="fw-bold text-white fs-5">{{ total_expenses|floatformat:0 }}</div>
+                        <div class="text-white small text-uppercase opacity-50" style="font-size: 0.6rem;">Categories</div>
+                        <div class="fw-bold text-white fs-4">{{ total_expenses|floatformat:0 }}</div>
                     </div>
                 </div>
 
-                <!-- Custom Legend / Summary -->
-                <div class="mt-auto">
-                    <div class="d-flex justify-content-between align-items-center border-top border-secondary pt-3 mt-3" style="border-color: rgba(255,255,255,0.1) !important;">
-                        <span class="text-secondary">Total Logged Expenses</span>
+                <div class="mt-auto pt-4 border-top border-white border-opacity-10">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-white opacity-50 small">Detailed Expenses</span>
                         <span class="text-white fw-bold">₹ {{ total_expenses|floatformat:2 }}</span>
                     </div>
-                    <div class="small text-secondary text-center mt-3 fst-italic">
-                        Breakdown of maintenance, insurance, etc.
-                    </div>
+                    <p class="text-white-50 fst-italic" style="font-size: 0.75rem;">Includes maintenance, insurance, and repairs.</p>
                 </div>
             </div>
         </div>
@@ -136,37 +198,31 @@
 </div>
 
 <script>
-    // --- GRADIENT GENERATION HELPER ---
-    function getGradient(ctx, colorStart, colorEnd) {
-        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, colorStart);
-        gradient.addColorStop(1, colorEnd);
-        return gradient;
-    }
+    // --- Chart.js Customization ---
+    Chart.defaults.color = '#94a3b8';
+    Chart.defaults.font.family = "'Outfit', sans-serif";
 
-    // 1. TREND CHART CONFIG
+    // 1. Monthly Trend Chart
     const ctxTrend = document.getElementById('trendChart').getContext('2d');
-    
-    // Create a rich blue gradient for the line fill
-    const fillGradient = ctxTrend.createLinearGradient(0, 0, 0, 400);
-    fillGradient.addColorStop(0, 'rgba(59, 130, 246, 0.5)'); // Blue top
-    fillGradient.addColorStop(1, 'rgba(59, 130, 246, 0.0)'); // Transparent bottom
+    const chartFillGradient = ctxTrend.createLinearGradient(0, 0, 0, 400);
+    chartFillGradient.addColorStop(0, 'rgba(59, 130, 246, 0.4)');
+    chartFillGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
     new Chart(ctxTrend, {
         type: 'line',
         data: {
             labels: {{ line_labels|safe }}, 
             datasets: [{
-                label: 'Spending',
+                label: 'Expenditure',
                 data: {{ line_data|safe }},
-                borderColor: '#ffffff',       // White line for high contrast against black
-                backgroundColor: fillGradient, // Blue gradient fade
-                borderWidth: 2,
+                borderColor: '#3b82f6',
+                backgroundColor: chartFillGradient,
+                borderWidth: 3,
                 pointBackgroundColor: '#000000',
                 pointBorderColor: '#3b82f6',
                 pointBorderWidth: 2,
-                pointRadius: 4,
-                pointHoverRadius: 6,
+                pointRadius: 5,
+                pointHoverRadius: 8,
                 tension: 0.4,
                 fill: true
             }]
@@ -177,46 +233,33 @@
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: 'rgba(20, 20, 20, 0.9)',
-                    titleColor: '#ffffff',
-                    bodyColor: '#cbd5e1',
+                    backgroundColor: 'rgba(10, 10, 10, 0.95)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
                     borderColor: 'rgba(255,255,255,0.1)',
                     borderWidth: 1,
-                    padding: 10,
+                    padding: 12,
                     displayColors: false,
                     callbacks: {
-                        label: function(context) {
-                            return ' ₹ ' + context.parsed.y;
-                        }
+                        label: (ctx) => ' ₹ ' + ctx.parsed.y.toLocaleString()
                     }
                 }
             },
             scales: {
                 y: {
                     beginAtZero: true,
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.05)',
-                        borderDash: [5, 5]
-                    },
-                    ticks: {
-                        color: '#64748b',
-                        font: { family: "'Outfit', sans-serif" }
-                    },
-                    border: { display: false }
+                    grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
+                    ticks: { padding: 10 }
                 },
                 x: {
                     grid: { display: false },
-                    ticks: {
-                        color: '#64748b',
-                        font: { family: "'Outfit', sans-serif" }
-                    },
-                    border: { display: false }
+                    ticks: { padding: 10 }
                 }
             }
         }
     });
 
-    // 2. CATEGORY CHART CONFIG
+    // 2. Category Distribution Chart
     const ctxCategory = document.getElementById('categoryChart').getContext('2d');
     new Chart(ctxCategory, {
         type: 'doughnut',
@@ -227,38 +270,31 @@
                 backgroundColor: [
                     '#3b82f6', // Electric Blue
                     '#ffffff', // White
-                    '#60a5fa', // Light Blue
-                    '#1e293b', // Dark Blue/Grey
-                    '#94a3b8', // Grey
-                    '#1d4ed8'  // Deep Blue
+                    '#60a5fa', // Sky Blue
+                    '#1e293b', // Deep Slate
+                    '#ef4444'  // Sassy Red
                 ],
-                borderColor: '#000000', // Matches background for clean separation
-                borderWidth: 4,
-                hoverOffset: 4
+                borderColor: '#000000',
+                borderWidth: 5,
+                hoverOffset: 10
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            cutout: '80%',
             plugins: {
                 legend: {
                     position: 'bottom',
                     labels: {
                         color: '#94a3b8',
-                        padding: 20,
                         usePointStyle: true,
                         pointStyle: 'circle',
-                        font: { size: 11, family: "'Outfit', sans-serif" }
+                        padding: 20,
+                        font: { size: 11 }
                     }
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(20, 20, 20, 0.9)',
-                    bodyColor: '#fff',
-                    borderColor: 'rgba(255,255,255,0.1)',
-                    borderWidth: 1
                 }
-            },
-            cutout: '75%', // Thinner elegant ring
+            }
         }
     });
 </script>
