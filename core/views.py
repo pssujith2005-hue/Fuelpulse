@@ -52,7 +52,7 @@ BUDGET_CARS = [
     {'make': 'Maruti', 'model': 'Wagon R', 'type': 'Hatchback', 'price': '5.54 Lakh', 'img': 'https://upload.wikimedia.org/wikipedia/commons/7/7e/2019_Maruti_Suzuki_WagonR_VXi_1.2_front_view.jpg'},
     {'make': 'Tata', 'model': 'Tiago', 'type': 'Hatchback', 'price': '5.60 Lakh', 'img': 'https://upload.wikimedia.org/wikipedia/commons/8/87/Tata_Tiago_XZ%2B_%28facelift%29_front_view.jpg'},
     {'make': 'Maruti', 'model': 'Ignis', 'type': 'Hatchback', 'price': '5.84 Lakh', 'img': 'https://upload.wikimedia.org/wikipedia/commons/a/a3/Suzuki_Ignis_Hybrid_MF_2022.jpg'},
-    {'make': 'Maruti', 'model': 'Swift', 'type': 'Hatchback', 'price': '5.99 Lakh', 'img': 'https://upload.wikimedia.org/wikipedia/commons/0/07/2024_Suzuki_Swift_Hybrid_MZ_%28Europe%29_front_view_01.jpg'},
+    {'make': 'Maruti', 'model': 'Swift', 'type': 'Hatchback', 'price': '5.99 Lakh', 'img': 'https://share.google/TTRt7lGgR9wodFsjM'},
     {'make': 'Maruti', 'model': 'Baleno', 'type': 'Hatchback', 'price': '6.66 Lakh', 'img': 'https://upload.wikimedia.org/wikipedia/commons/2/23/2022_Maruti_Suzuki_Baleno_Alpha_%28India%29_front_view.jpg'},
     {'make': 'Hyundai', 'model': 'Grand i10 Nios', 'type': 'Hatchback', 'price': '5.92 Lakh', 'img': 'https://upload.wikimedia.org/wikipedia/commons/5/53/2023_Hyundai_Grand_i10_Nios_Asta_AMT_%28India%29_front_view.jpg'},
     {'make': 'Hyundai', 'model': 'i20', 'type': 'Hatchback', 'price': '7.04 Lakh', 'img': 'https://upload.wikimedia.org/wikipedia/commons/a/a2/2020_Hyundai_i20_Asta_%28O%29_1.0_Turbo_DCT_%28India%29_front_view.jpg'},
@@ -278,6 +278,7 @@ def dashboard(request):
         'total_distance': round(total_distance, 1),
         'valuation_result': valuation_result, 
         'valuation_vehicle': valuation_vehicle,
+    
         
         # Pass Notification Data to Template
         'notifications': notifications,          
@@ -285,7 +286,7 @@ def dashboard(request):
     }
 
     return render(request, 'core/dashboard.html', context)
-    client = OpenAI(api_key="AIzaSyBOUf9NQxqpi_NOPFIpUcH4M_8gn0QyrCw") 
+    client = OpenAI(api_key="AIzaSyBGkIOACdde-_yk8Ekr1GzVmbZfrxeC_RA") 
 # core/views.py
 @login_required
 def analytics_dashboard(request):
